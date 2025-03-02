@@ -1,3 +1,27 @@
+{
+  "policyID": "POL1001",
+  "name": "Home Insurance",
+  "premiumAmount": 200,
+  "coverageDetails": "Covers damages to the home due to fire, flood, etc.",
+  "validityPeriod": "2025-12-31",
+  "customer": {
+    "customerID": 1
+  },
+  "agent": {
+    "agentId": 1234
+  },
+  "claims": []
+}
+
+{
+  "agentId": 1234,
+  "name": "John Doe",
+  "contactInfo": "1234567890",
+  "policies": []
+}
+
+
+
 package com.example.demo;
 
 import com.example.controller.AgentController;
