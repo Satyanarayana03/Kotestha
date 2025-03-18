@@ -1,127 +1,23 @@
+import { bootstrapApplication } from '@angular/platform-browser';
+import { AppComponent } from './app.component';
+import { importProvidersFrom } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+bootstrapApplication(AppComponent, {
+  providers: [importProvidersFrom(FormsModule)]
+}).catch(err => console.error(err));
+
+
 import { Component } from '@angular/core';
-import { AgentService, Agent } from 'src/app/services/agent.service';
-import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-add-agent',
-  templateUrl: './add-agent.component.html',
-  styleUrls: ['./add-agent.component.css']
+  selector: 'app-root',
+  standalone: true,
+  imports: [FormsModule],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
-export class AddAgentComponent {
-  agent: Agent = { agentId: 0, name: '', contactInfo: '', assignedPolicies: '' };
-
-  constructor(private agentService: AgentService, private router: Router) {}
-
-  addAgent() {
-    this.agentService.addAgent(this.agent).subscribe(() => {
-      alert('Agent added successfully!');
-      this.router.navigate(['/agents']);
-    });
-  }
+export class AppComponent {
+  title = 'Agent Management';
 }
-
-<div class="container mt-4">
-  <h2>Add New Agent</h2>
-  <form (ngSubmit)="addAgent()">
-    <div class="mb-3">
-      <label class="form-label">ID</label>
-      <input type="number" class="form-control" [(ngModel)]="agent.agentId" name="agentId" required />
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Name</label>
-      <input type="text" class="form-control" [(ngModel)]="agent.name" name="name" required />
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Contact Info</label>
-      <input type="text" class="form-control" [(ngModel)]="agent.contactInfo" name="contactInfo" required />
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Assigned Policies</label>
-      <input type="text" class="form-control" [(ngModel)]="agent.assignedPolicies" name="assignedPolicies" required />
-    </div>
-    <button type="submit" class="btn btn-primary">Add Agent</button>
-  </form>
-</div>
-
-Cannot find module 'src/app/services/agent.service' or its corresponding type declarations.ts(2307)
-
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { FormsModule } from '@angular/forms'; // ✅ Import FormsModule
-
-import { AddAgentComponent } from './components/add-agent/add-agent.component';
-import { ListAgentsComponent } from './components/list-agents/list-agents.component';
-
-@NgModule({
-  declarations: [
-    AppComponent,
-    AddAgentComponent,
-    ListAgentsComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule // ✅ Add FormsModule here
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
-export class AppModule {}
-
-
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms'; // ✅ Required for ngModel
-import { HttpClientModule } from '@angular/common/http'; // ✅ Required for API calls
-
-import { AppComponent } from './app.component';
-import { AddAgentComponent } from './components/add-agent/add-agent.component';
-import { ListAgentsComponent } from './components/list-agents/list-agents.component';
-
-@NgModule({
-  declarations: [
-    AppComponent,
-    AddAgentComponent,
-    ListAgentsComponent
-  ],
-  imports: [
-    BrowserModule,
-    FormsModule, // ✅ Important for ngModel
-    HttpClientModule // ✅ Important for calling APIs
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
-export class AppModule { }
-Component AppComponent is standalone, and cannot be declared in an NgModule. Did you mean to import it instead?
-
-
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-
-import { AppComponent } from './app.component';
-import { AddAgentComponent } from './components/add-agent/add-agent.component';
-import { ListAgentsComponent } from './components/list-agents/list-agents.component';
-
-@NgModule({
-  // Do not declare standalone components here.
-  declarations: [
-    // Remove AppComponent from declarations if it is standalone.
-    AddAgentComponent,
-    ListAgentsComponent
-  ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    HttpClientModule,
-    AppComponent  // Import the standalone AppComponent here.
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
-})
-export class AppModule { }
-
