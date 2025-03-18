@@ -96,3 +96,32 @@ import { ListAgentsComponent } from './components/list-agents/list-agents.compon
 })
 export class AppModule { }
 Component AppComponent is standalone, and cannot be declared in an NgModule. Did you mean to import it instead?
+
+
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+
+import { AppComponent } from './app.component';
+import { AddAgentComponent } from './components/add-agent/add-agent.component';
+import { ListAgentsComponent } from './components/list-agents/list-agents.component';
+
+@NgModule({
+  // Do not declare standalone components here.
+  declarations: [
+    // Remove AppComponent from declarations if it is standalone.
+    AddAgentComponent,
+    ListAgentsComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    HttpClientModule,
+    AppComponent  // Import the standalone AppComponent here.
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
