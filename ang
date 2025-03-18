@@ -1,23 +1,7 @@
-import { bootstrapApplication } from '@angular/platform-browser';
-import { AppComponent } from './app.component';
-import { importProvidersFrom } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Routes } from '@angular/router';
+import { AddAgentComponent } from './components/add-agent/add-agent.component';
 
-bootstrapApplication(AppComponent, {
-  providers: [importProvidersFrom(FormsModule)]
-}).catch(err => console.error(err));
-
-
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-
-@Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [FormsModule],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
-})
-export class AppComponent {
-  title = 'Agent Management';
-}
+export const routes: Routes = [
+  { path: 'add-agent', component: AddAgentComponent },
+  { path: '', redirectTo: '/add-agent', pathMatch: 'full' }
+];
