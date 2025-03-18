@@ -1,158 +1,46 @@
 import { Component } from '@angular/core';
-import { AgentService, Agent } from 'src/app/services/agent.service';
-import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-update-agent',
-  templateUrl: './update-agent.component.html',
-  styleUrls: ['./update-agent.component.css']
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
-export class UpdateAgentComponent {
-  agent: Agent = { agentId: 0, name: '', contactInfo: '', assignedPolicies: '' };
-  searchId: number | null = null;
-
-  constructor(private agentService: AgentService, private router: Router) {}
-
-  // Search for an existing agent by ID
-  searchAgent() {
-    if (this.searchId != null) {
-      this.agentService.getAgentById(this.searchId).subscribe(
-        data => this.agent = data,
-        error => alert('Agent not found')
-      );
-    }
-  }
-
-  // Update the agent details
-  updateAgent() {
-    this.agentService.updateAgent(this.agent).subscribe(
-      () => {
-        alert('Agent updated successfully!');
-        this.router.navigate(['/agents']);
-      },
-      error => alert('Update failed!')
-    );
-  }
+export class AppComponent {
+  title = 'Agent Management';
 }
 
 
+<!-- Navigation Bar using Bootstrap -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/agents">{{ title }}</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/agents">Agents List</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/add-agent">Add Agent</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/update-agent">Update Agent</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/delete-agent">Delete Agent</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/search-agent">Search Agent</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Main content area for routed components -->
 <div class="container mt-4">
-  <h2>Update Agent</h2>
-  <!-- Search Section -->
-  <div class="mb-3">
-    <label class="form-label">Enter Agent ID to search</label>
-    <input type="number" [(ngModel)]="searchId" class="form-control" placeholder="Agent ID" />
-    <button class="btn btn-info mt-2" (click)="searchAgent()">Search</button>
-  </div>
-  
-  <!-- Update Form (shown when an agent is found) -->
-  <div *ngIf="agent.agentId">
-    <form (ngSubmit)="updateAgent()">
-      <div class="mb-3">
-        <label class="form-label">Agent ID</label>
-        <input type="number" class="form-control" [(ngModel)]="agent.agentId" name="agentId" disabled/>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Name</label>
-        <input type="text" class="form-control" [(ngModel)]="agent.name" name="name" required/>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Contact Info</label>
-        <input type="text" class="form-control" [(ngModel)]="agent.contactInfo" name="contactInfo" required/>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Assigned Policies</label>
-        <input type="text" class="form-control" [(ngModel)]="agent.assignedPolicies" name="assignedPolicies" required/>
-      </div>
-      <button type="submit" class="btn btn-primary">Update Agent</button>
-    </form>
-  </div>
+  <router-outlet></router-outlet>
 </div>
-
-
-import { Component } from '@angular/core';
-import { AgentService } from 'src/app/services/agent.service';
-import { Router } from '@angular/router';
-
-@Component({
-  selector: 'app-delete-agent',
-  templateUrl: './delete-agent.component.html',
-  styleUrls: ['./delete-agent.component.css']
-})
-export class DeleteAgentComponent {
-  agentId: number | null = null;
-
-  constructor(private agentService: AgentService, private router: Router) {}
-
-  deleteAgent() {
-    if (this.agentId != null) {
-      this.agentService.deleteAgent(this.agentId).subscribe(
-        () => {
-          alert('Agent deleted successfully!');
-          this.router.navigate(['/agents']);
-        },
-        error => alert('Agent deletion failed!')
-      );
-    }
-  }
-}
-
-<div class="container mt-4">
-  <h2>Delete Agent</h2>
-  <div class="mb-3">
-    <label class="form-label">Enter Agent ID to delete</label>
-    <input type="number" [(ngModel)]="agentId" class="form-control" placeholder="Agent ID" required/>
-  </div>
-  <button class="btn btn-danger" (click)="deleteAgent()">Delete Agent</button>
-</div>
-
-
-import { Component } from '@angular/core';
-import { AgentService, Agent } from 'src/app/services/agent.service';
-
-@Component({
-  selector: 'app-search-agent',
-  templateUrl: './search-agent.component.html',
-  styleUrls: ['./search-agent.component.css']
-})
-export class SearchAgentComponent {
-  searchId: number | null = null;
-  agent: Agent | null = null;
-
-  constructor(private agentService: AgentService) {}
-
-  searchAgent() {
-    if (this.searchId != null) {
-      this.agentService.getAgentById(this.searchId).subscribe(
-        data => this.agent = data,
-        error => {
-          alert('Agent not found');
-          this.agent = null;
-        }
-      );
-    }
-  }
-}
-
-
-<div class="container mt-4">
-  <h2>Search Agent</h2>
-  <div class="mb-3">
-    <label class="form-label">Enter Agent ID</label>
-    <input type="number" [(ngModel)]="searchId" class="form-control" placeholder="Agent ID" required/>
-    <button class="btn btn-info mt-2" (click)="searchAgent()">Search</button>
-  </div>
-  
-  <!-- Display Agent Details -->
-  <div *ngIf="agent">
-    <h3>Agent Details</h3>
-    <ul class="list-group">
-      <li class="list-group-item"><strong>ID: </strong>{{ agent.agentId }}</li>
-      <li class="list-group-item"><strong>Name: </strong>{{ agent.name }}</li>
-      <li class="list-group-item"><strong>Contact Info: </strong>{{ agent.contactInfo }}</li>
-      <li class="list-group-item"><strong>Assigned Policies: </strong>{{ agent.assignedPolicies }}</li>
-    </ul>
-  </div>
-</div>
-
-
