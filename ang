@@ -1,42 +1,158 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AgentService, Agent } from 'src/app/services/agent.service';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-list-agents',
-  templateUrl: './list-agents.component.html',
-  styleUrls: ['./list-agents.component.css']
+  selector: 'app-update-agent',
+  templateUrl: './update-agent.component.html',
+  styleUrls: ['./update-agent.component.css']
 })
-export class ListAgentsComponent implements OnInit {
-  agents: Agent[] = [];
+export class UpdateAgentComponent {
+  agent: Agent = { agentId: 0, name: '', contactInfo: '', assignedPolicies: '' };
+  searchId: number | null = null;
 
-  constructor(private agentService: AgentService) {}
+  constructor(private agentService: AgentService, private router: Router) {}
 
-  ngOnInit() {
-    this.agentService.getAllAgents().subscribe((data) => {
-      this.agents = data;
-    });
+  // Search for an existing agent by ID
+  searchAgent() {
+    if (this.searchId != null) {
+      this.agentService.getAgentById(this.searchId).subscribe(
+        data => this.agent = data,
+        error => alert('Agent not found')
+      );
+    }
+  }
+
+  // Update the agent details
+  updateAgent() {
+    this.agentService.updateAgent(this.agent).subscribe(
+      () => {
+        alert('Agent updated successfully!');
+        this.router.navigate(['/agents']);
+      },
+      error => alert('Update failed!')
+    );
   }
 }
 
 
 <div class="container mt-4">
-  <h2>Agent List</h2>
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Contact Info</th>
-        <th>Assigned Policies</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let agent of agents">
-        <td>{{ agent.agentId }}</td>
-        <td>{{ agent.name }}</td>
-        <td>{{ agent.contactInfo }}</td>
-        <td>{{ agent.assignedPolicies }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <h2>Update Agent</h2>
+  <!-- Search Section -->
+  <div class="mb-3">
+    <label class="form-label">Enter Agent ID to search</label>
+    <input type="number" [(ngModel)]="searchId" class="form-control" placeholder="Agent ID" />
+    <button class="btn btn-info mt-2" (click)="searchAgent()">Search</button>
+  </div>
+  
+  <!-- Update Form (shown when an agent is found) -->
+  <div *ngIf="agent.agentId">
+    <form (ngSubmit)="updateAgent()">
+      <div class="mb-3">
+        <label class="form-label">Agent ID</label>
+        <input type="number" class="form-control" [(ngModel)]="agent.agentId" name="agentId" disabled/>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input type="text" class="form-control" [(ngModel)]="agent.name" name="name" required/>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Contact Info</label>
+        <input type="text" class="form-control" [(ngModel)]="agent.contactInfo" name="contactInfo" required/>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Assigned Policies</label>
+        <input type="text" class="form-control" [(ngModel)]="agent.assignedPolicies" name="assignedPolicies" required/>
+      </div>
+      <button type="submit" class="btn btn-primary">Update Agent</button>
+    </form>
+  </div>
 </div>
+
+
+import { Component } from '@angular/core';
+import { AgentService } from 'src/app/services/agent.service';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-delete-agent',
+  templateUrl: './delete-agent.component.html',
+  styleUrls: ['./delete-agent.component.css']
+})
+export class DeleteAgentComponent {
+  agentId: number | null = null;
+
+  constructor(private agentService: AgentService, private router: Router) {}
+
+  deleteAgent() {
+    if (this.agentId != null) {
+      this.agentService.deleteAgent(this.agentId).subscribe(
+        () => {
+          alert('Agent deleted successfully!');
+          this.router.navigate(['/agents']);
+        },
+        error => alert('Agent deletion failed!')
+      );
+    }
+  }
+}
+
+<div class="container mt-4">
+  <h2>Delete Agent</h2>
+  <div class="mb-3">
+    <label class="form-label">Enter Agent ID to delete</label>
+    <input type="number" [(ngModel)]="agentId" class="form-control" placeholder="Agent ID" required/>
+  </div>
+  <button class="btn btn-danger" (click)="deleteAgent()">Delete Agent</button>
+</div>
+
+
+import { Component } from '@angular/core';
+import { AgentService, Agent } from 'src/app/services/agent.service';
+
+@Component({
+  selector: 'app-search-agent',
+  templateUrl: './search-agent.component.html',
+  styleUrls: ['./search-agent.component.css']
+})
+export class SearchAgentComponent {
+  searchId: number | null = null;
+  agent: Agent | null = null;
+
+  constructor(private agentService: AgentService) {}
+
+  searchAgent() {
+    if (this.searchId != null) {
+      this.agentService.getAgentById(this.searchId).subscribe(
+        data => this.agent = data,
+        error => {
+          alert('Agent not found');
+          this.agent = null;
+        }
+      );
+    }
+  }
+}
+
+
+<div class="container mt-4">
+  <h2>Search Agent</h2>
+  <div class="mb-3">
+    <label class="form-label">Enter Agent ID</label>
+    <input type="number" [(ngModel)]="searchId" class="form-control" placeholder="Agent ID" required/>
+    <button class="btn btn-info mt-2" (click)="searchAgent()">Search</button>
+  </div>
+  
+  <!-- Display Agent Details -->
+  <div *ngIf="agent">
+    <h3>Agent Details</h3>
+    <ul class="list-group">
+      <li class="list-group-item"><strong>ID: </strong>{{ agent.agentId }}</li>
+      <li class="list-group-item"><strong>Name: </strong>{{ agent.name }}</li>
+      <li class="list-group-item"><strong>Contact Info: </strong>{{ agent.contactInfo }}</li>
+      <li class="list-group-item"><strong>Assigned Policies: </strong>{{ agent.assignedPolicies }}</li>
+    </ul>
+  </div>
+</div>
+
+
