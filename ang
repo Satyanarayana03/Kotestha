@@ -70,3 +70,29 @@ import { ListAgentsComponent } from './components/list-agents/list-agents.compon
 })
 export class AppModule {}
 
+
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms'; // ✅ Required for ngModel
+import { HttpClientModule } from '@angular/common/http'; // ✅ Required for API calls
+
+import { AppComponent } from './app.component';
+import { AddAgentComponent } from './components/add-agent/add-agent.component';
+import { ListAgentsComponent } from './components/list-agents/list-agents.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    AddAgentComponent,
+    ListAgentsComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule, // ✅ Important for ngModel
+    HttpClientModule // ✅ Important for calling APIs
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
