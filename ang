@@ -95,4 +95,4 @@ import { ListAgentsComponent } from './components/list-agents/list-agents.compon
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-
+Component AppComponent is standalone, and cannot be declared in an NgModule. Did you mean to import it instead?
