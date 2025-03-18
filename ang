@@ -1,7 +1,42 @@
-import { Routes } from '@angular/router';
-import { AddAgentComponent } from './components/add-agent/add-agent.component';
+import { Component, OnInit } from '@angular/core';
+import { AgentService, Agent } from 'src/app/services/agent.service';
 
-export const routes: Routes = [
-  { path: 'add-agent', component: AddAgentComponent },
-  { path: '', redirectTo: '/add-agent', pathMatch: 'full' }
-];
+@Component({
+  selector: 'app-list-agents',
+  templateUrl: './list-agents.component.html',
+  styleUrls: ['./list-agents.component.css']
+})
+export class ListAgentsComponent implements OnInit {
+  agents: Agent[] = [];
+
+  constructor(private agentService: AgentService) {}
+
+  ngOnInit() {
+    this.agentService.getAllAgents().subscribe((data) => {
+      this.agents = data;
+    });
+  }
+}
+
+
+<div class="container mt-4">
+  <h2>Agent List</h2>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Contact Info</th>
+        <th>Assigned Policies</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let agent of agents">
+        <td>{{ agent.agentId }}</td>
+        <td>{{ agent.name }}</td>
+        <td>{{ agent.contactInfo }}</td>
+        <td>{{ agent.assignedPolicies }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
