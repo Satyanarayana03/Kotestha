@@ -43,3 +43,4 @@ export class AddAgentComponent {
   </form>
 </div>
 
+Cannot find module 'src/app/services/agent.service' or its corresponding type declarations.ts(2307)
