@@ -1,0 +1,39 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export interface Agent {
+  agentId: number;
+  name: string;
+  contactInfo: string;
+  assignedPolicies: string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AgentService {
+  private baseUrl = 'http://localhost:8080/agent';
+
+  constructor(private http: HttpClient) {}
+
+  addAgent(agent: Agent): Observable<Agent> {
+    return this.http.post<Agent>(`${this.baseUrl}/addAgent`, agent);
+  }
+
+  updateAgent(agent: Agent): Observable<Agent> {
+    return this.http.put<Agent>(`${this.baseUrl}/updateAgent`, agent);
+  }
+
+  getAllAgents(): Observable<Agent[]> {
+    return this.http.get<Agent[]>(`${this.baseUrl}/allAgent`);
+  }
+
+  getAgentById(id: number): Observable<Agent> {
+    return this.http.get<Agent>(`${this.baseUrl}/${id}`);
+  }
+
+  deleteAgent(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/deleteAgent/${id}`);
+  }
+}
