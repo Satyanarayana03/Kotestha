@@ -1,1 +1,45 @@
-ng generate component components/add-agent
+import { Component } from '@angular/core';
+import { AgentService, Agent } from 'src/app/services/agent.service';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-add-agent',
+  templateUrl: './add-agent.component.html',
+  styleUrls: ['./add-agent.component.css']
+})
+export class AddAgentComponent {
+  agent: Agent = { agentId: 0, name: '', contactInfo: '', assignedPolicies: '' };
+
+  constructor(private agentService: AgentService, private router: Router) {}
+
+  addAgent() {
+    this.agentService.addAgent(this.agent).subscribe(() => {
+      alert('Agent added successfully!');
+      this.router.navigate(['/agents']);
+    });
+  }
+}
+
+<div class="container mt-4">
+  <h2>Add New Agent</h2>
+  <form (ngSubmit)="addAgent()">
+    <div class="mb-3">
+      <label class="form-label">ID</label>
+      <input type="number" class="form-control" [(ngModel)]="agent.agentId" name="agentId" required />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Name</label>
+      <input type="text" class="form-control" [(ngModel)]="agent.name" name="name" required />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Contact Info</label>
+      <input type="text" class="form-control" [(ngModel)]="agent.contactInfo" name="contactInfo" required />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Assigned Policies</label>
+      <input type="text" class="form-control" [(ngModel)]="agent.assignedPolicies" name="assignedPolicies" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Add Agent</button>
+  </form>
+</div>
+
