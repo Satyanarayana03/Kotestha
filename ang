@@ -1,15 +1,17 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Agent Management</title>
-    <base href="/">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-  </head>
-  <body>
-    <app-root></app-root>
-    <script src="polyfills.js" type="module"></script>
-    <script src="main.js" type="module"></script>
-  </body>
-</html>
+<div class="whole">
+  <div class="container">
+  <nav class="nav navbar-dark bg-light navbar-expand-sm">
+        
+           <button class="nav-item" style="float:left;margin-right: 10px;" routerLink="add-agent">Add Agent</button>
+         
+           <button style="float:left;margin-right: 10px;" routerLink="list-agents">Agent List</button>
+
+           <button style="float:left;margin-right: 10px;" routerLink="search-agent">Search Agent </button>
+
+           <button style="float:left;margin-right: 10px;" routerLink="update-agent">Update Agent </button>
+
+           <button style="float:left;margin-right: 10px;" routerLink="delete-agent">Delete Agent </button>
+  </nav>
+</div>
+<router-outlet></router-outlet>
+</div>
