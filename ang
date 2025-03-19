@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Agent Management</title>
+  <title>Agent List</title>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <!-- Bootstrap CSS -->
@@ -22,61 +22,6 @@
                   url('https://source.unsplash.com/random/1920x1080?technology') no-repeat center center fixed;
       background-size: cover;
       color: #333;
-    }
-    /* Form container styling */
-    .form-container {
-      background: rgba(255, 255, 255, 0.9);
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 500px;
-    }
-    .form-container h2 {
-      font-weight: normal;
-      color: #333;
-    }
-    /* Input fields with glowing animation on focus */
-    .form-control {
-      transition: all 0.3s ease-in-out;
-    }
-    .form-control:focus {
-      border-color: #007bff;
-      box-shadow: 0 0 15px rgba(0,123,255,0.7);
-      transform: scale(1.02);
-    }
-    /* Button styling with interactive hover and ripple effects */
-    .btn {
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s ease;
-    }
-    .btn:hover {
-      transform: scale(1.05);
-      filter: brightness(90%);
-      box-shadow: 0 0 10px rgba(0,123,255,0.6);
-    }
-    .btn:active {
-      transform: scale(0.98);
-    }
-    .btn::after {
-      content: "";
-      position: absolute;
-      background: rgba(255, 255, 255, 0.5);
-      width: 100px;
-      height: 100px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      border-radius: 50%;
-      opacity: 0;
-      pointer-events: none;
-      transition: transform 0.6s, opacity 0.6s;
-    }
-    .btn:active::after {
-      transform: translate(-50%, -50%) scale(2);
-      opacity: 1;
-      transition: 0s;
     }
     /* Agent list container styling */
     .agent-list-container {
@@ -106,33 +51,6 @@
   </style>
 </head>
 <body>
-  <!-- Agent Form Section -->
-  <div class="container d-flex justify-content-center align-items-center mt-5">
-    <form [formGroup]="agentForm" (ngSubmit)="onSubmit()" class="form-container animate__animated animate__fadeInUp">
-      <h2 class="text-center mb-4">Agent Form</h2>
-      <div class="form-group mb-4">
-        <label for="agentId" class="form-label">Enter ID</label>
-        <input id="agentId" class="form-control" formControlName="agentId">
-      </div>
-      <div class="form-group mb-4">
-        <label for="name" class="form-label">Enter Name</label>
-        <input id="name" class="form-control" formControlName="name">
-      </div>
-      <div class="form-group mb-4">
-        <label for="contactInfo" class="form-label">Enter Contact Info</label>
-        <input id="contactInfo" class="form-control" formControlName="contactInfo">
-      </div>
-      <div class="form-group mb-4">
-        <label for="assignedPolicies" class="form-label">Enter Assigned Policies</label>
-        <input id="assignedPolicies" class="form-control" formControlName="assignedPolicies">
-      </div>
-      <div class="d-flex justify-content-between">
-        <button type="submit" class="btn btn-primary">Add Agent</button>
-        <button type="reset" (click)="cancel()" class="btn btn-secondary">Cancel</button>
-      </div>
-    </form>
-  </div>
-  
   <!-- Agent List Section -->
   <div class="container mt-5">
     <div *ngIf="agents.length > 0; else noAgents" class="agent-list-container">
