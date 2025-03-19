@@ -6,22 +6,38 @@
   <title>Agent Management</title>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <!-- Animate.css for smooth fade-in effect -->
+  <!-- Animate.css for fade-in effect -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <style>
-    /* Simple hover effect for navbar items */
-    .nav-link {
-      transition: color 0.3s ease-in-out;
-    }
-    .nav-link:hover {
-      color: #0056b3;
-    }
-    /* Navbar background transition on hover */
+    /* Navbar container styling */
     .navbar-custom {
       transition: background-color 0.3s ease;
     }
     .navbar-custom:hover {
       background-color: #e9ecef;
+    }
+    /* Nav-link hover effect and positioning for ripple */
+    .nav-link {
+      position: relative;
+      overflow: hidden;
+      transition: color 0.3s ease-in-out;
+    }
+    .nav-link:hover {
+      color: #0056b3;
+    }
+    /* Ripple effect styling */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      animation: ripple 600ms linear;
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
     }
   </style>
 </head>
@@ -29,7 +45,7 @@
   <nav class="navbar navbar-expand-md navbar-light bg-light navbar-custom animate__animated animate__fadeInDown">
     <!-- Brand -->
     <a class="navbar-brand" routerLink="/">AgentMgmt</a>
-    <!-- Toggler/collapsibe Button -->
+    <!-- Toggler/collapsible Button -->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" 
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -38,19 +54,19 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
-          <a class="nav-link" routerLink="add-agent">Add Agent</a>
+          <a class="nav-link" routerLink="add-agent" data-toggle="tooltip" data-placement="bottom" title="Add a new agent">Add Agent</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="list-agents">Agent List</a>
+          <a class="nav-link" routerLink="list-agents" data-toggle="tooltip" data-placement="bottom" title="View the list of agents">Agent List</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="search-agent">Search Agent</a>
+          <a class="nav-link" routerLink="search-agent" data-toggle="tooltip" data-placement="bottom" title="Search for an agent">Search Agent</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="update-agent">Update Agent</a>
+          <a class="nav-link" routerLink="update-agent" data-toggle="tooltip" data-placement="bottom" title="Update agent details">Update Agent</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="delete-agent">Delete Agent</a>
+          <a class="nav-link" routerLink="delete-agent" data-toggle="tooltip" data-placement="bottom" title="Remove an agent">Delete Agent</a>
         </li>
       </ul>
     </div>
@@ -60,8 +76,35 @@
     <router-outlet></router-outlet>
   </div>
 
-  <!-- Bootstrap JS and dependencies -->
+  <!-- jQuery and Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Initialize tooltips
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    // Add ripple effect to nav links
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', function (e) {
+        // Remove any existing ripple
+        const existingRipple = this.querySelector('.ripple');
+        if (existingRipple) {
+          existingRipple.remove();
+        }
+        let ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = e.clientX - rect.left - size / 2 + 'px';
+        ripple.style.top = e.clientY - rect.top - size / 2 + 'px';
+        this.appendChild(ripple);
+        // Remove the ripple after animation completes
+        setTimeout(() => ripple.remove(), 600);
+      });
+    });
+  </script>
 </body>
 </html>
