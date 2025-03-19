@@ -1,20 +1,118 @@
-<div class="whole">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Search Agent</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <style>
+    /* Container styling */
+    .whole {
+      max-width: 600px;
+      margin: 40px auto;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h2 {
+      font-weight: normal;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    /* Input styling with glowing focus effect */
+    .form-control {
+      transition: all 0.3s ease-in-out;
+    }
+    .form-control:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 15px rgba(0,123,255,0.7);
+      transform: scale(1.02);
+    }
+    /* Button styling with ripple and hover effects */
+    .btn {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+      filter: brightness(90%);
+      box-shadow: 0 0 10px rgba(0,123,255,0.6);
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    .btn::after {
+      content: "";
+      position: absolute;
+      background: rgba(255,255,255,0.5);
+      width: 100px;
+      height: 100px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.6s, opacity 0.6s;
+    }
+    .btn:active::after {
+      transform: translate(-50%, -50%) scale(2);
+      opacity: 1;
+      transition: 0s;
+    }
+    /* Agent details card styling */
+    .agent-details {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      text-align: left;
+    }
+    .agent-details h3 {
+      margin-bottom: 15px;
+      font-weight: 600;
+      color: #007bff;
+    }
+    .agent-details p {
+      margin: 5px 0;
+      font-size: 1rem;
+    }
+    .agent-details p strong {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="whole animate__animated animate__fadeIn">
     <h2>Search Agent</h2>
     <div class="form-group mb-3">
       <label for="id" class="form-label">Enter ID</label>
       <input type="number" id="id" [(ngModel)]="id" placeholder="Enter ID" class="form-control" />
     </div>
     <button (click)="searchAgent()" class="btn btn-primary mb-3">Search</button>
-  
-    <div *ngIf="agent" class="agent-details">
+    <div *ngIf="agent" class="agent-details animate__animated animate__fadeInUp">
       <h3>Agent Details</h3>
       <p><strong>ID:</strong> {{ agent.agentId }}</p>
       <p><strong>Name:</strong> {{ agent.name }}</p>
       <p><strong>Contact Info:</strong> {{ agent.contactInfo }}</p>
       <p><strong>Assigned Policies:</strong> {{ agent.assignedPolicies }}</p>
     </div>
-  
     <div *ngIf="errorMsg" class="text-danger">
       <p>{{ errorMsg }}</p>
     </div>
   </div>
+  
+  <!-- jQuery and Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
