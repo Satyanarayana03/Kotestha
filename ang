@@ -8,12 +8,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <!-- Animate.css -->
+  <!-- Animate.css for fade-in effect -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <style>
-    /* Global styles for full-page background and font */
+    /* Full-page background and font styling */
     html, body {
-      height: 100%;
+      min-height: 100vh;
       margin: 0;
       padding: 0;
       font-family: 'Montserrat', sans-serif;
@@ -36,13 +36,16 @@
       font-weight: normal;
       color: #333;
     }
-    /* Input focus effects */
-    .form-control:focus {
-      border-color: #007bff;
-      box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+    /* Input field animation on focus */
+    .form-control {
       transition: all 0.3s ease-in-out;
     }
-    /* Button styling with interactive hover and ripple effect */
+    .form-control:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+      transform: scale(1.02);
+    }
+    /* Button styling with interactive ripple effect */
     .btn {
       position: relative;
       overflow: hidden;
@@ -51,7 +54,6 @@
     .btn:hover {
       filter: brightness(90%);
     }
-    /* Ripple effect for buttons */
     .btn::after {
       content: "";
       position: absolute;
