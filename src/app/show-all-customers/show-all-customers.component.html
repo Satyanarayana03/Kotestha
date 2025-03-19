@@ -1,0 +1,26 @@
+<div *ngIf="customers.length > 0; else noCustomers" class="customer-list-container">
+    <h2 class="text-center mb-4">Customer List</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Customer ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Address</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let customer of customers">
+          <td>{{ customer.customerID }}</td>
+          <td>{{ customer.name }}</td>
+          <td>{{ customer.email }}</td>
+          <td>{{ customer.phone }}</td>
+          <td>{{ customer.address }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ng-template #noCustomers>
+    <p class="no-customers">No customers found.</p>
+  </ng-template>
