@@ -1,23 +1,70 @@
-core.mjs:6558 ERROR Error: Cannot find control with name: 'assignedPolicies'
-    at _throwError (forms.mjs:3514:9)
-    at setUpControl (forms.mjs:3305:19)
-    at _FormGroupDirective.addControl (forms.mjs:5522:5)
-    at _FormControlName._setUpControl (forms.mjs:6205:39)
-    at _FormControlName.ngOnChanges (forms.mjs:6161:28)
-    at _FormControlName.rememberChangeHistoryAndInvokeOnChangesHook (core.mjs:3065:10)
-    at callHookInternal (core.mjs:4120:10)
-    at callHook (core.mjs:4147:5)
-    at callHooks (core.mjs:4104:9)
-    at executeInitAndCheckHooks (core.mjs:4059:5)
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { AuthenticationService } from '../authentication.service';
 
-core.mjs:6558 ERROR Error: Cannot find control with name: 'contactInfo'
-    at _throwError (forms.mjs:3514:9)
-    at setUpControl (forms.mjs:3305:19)
-    at _FormGroupDirective.addControl (forms.mjs:5522:5)
-    at _FormControlName._setUpControl (forms.mjs:6205:39)
-    at _FormControlName.ngOnChanges (forms.mjs:6161:28)
-    at _FormControlName.rememberChangeHistoryAndInvokeOnChangesHook (core.mjs:3065:10)
-    at callHookInternal (core.mjs:4120:10)
-    at callHook (core.mjs:4147:5)
-    at callHooks (core.mjs:4104:9)
-    at executeInitAndCheckHooks (core.mjs:4059:5)
+@Component({
+  selector: 'app-registration',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
+  templateUrl: './registration.component.html',
+  styleUrl: './registration.component.css'
+})
+export class RegistrationComponent implements OnInit {
+  registrationForm!: FormGroup;
+  selectedRole: string = 'customer';
+
+  constructor(private formBuilder: FormBuilder, private authenticate: AuthenticationService, private router: Router) {}
+
+  ngOnInit(): void {
+    this.initializeForm();
+  }
+
+  initializeForm(): void {
+    if (this.selectedRole === 'customer') {
+      this.registrationForm = this.formBuilder.group({
+        role: ['customer', Validators.required],
+        id: ['', Validators.required],
+        name: ['', Validators.required],
+        email: ['', [Validators.required, Validators.email]],
+        phoneNo: ['', Validators.required],
+        password: ['', Validators.required],
+        address: ['', Validators.required]
+      });
+    } else {
+      this.registrationForm = this.formBuilder.group({
+        role: ['agent', Validators.required],
+        id: ['', Validators.required],
+        name: ['', Validators.required],
+        contactInfo: ['', Validators.required],
+        password: ['', Validators.required],
+        assignedPolicies: ['', Validators.required]
+      });
+    }
+  }
+
+  onRoleChange(): void {
+    this.registrationForm.reset(); // Reset form to avoid errors
+    this.initializeForm(); // Reinitialize with correct controls
+  }
+
+  onSubmit(): void {
+    if (this.registrationForm.valid) {
+      const registerMethod = this.selectedRole === 'customer' ? 'registerCustomer' : 'registerAgent';
+
+      this.authenticate[registerMethod](this.registrationForm.value).subscribe({
+        next: (data: any) => {
+          localStorage.setItem('userData', JSON.stringify(data));
+          console.log(`${this.selectedRole} registered successfully:`, data);
+          this.router.navigate(['home']);
+        },
+        error: (err) => {
+          console.error(`Error registering the ${this.selectedRole}:`, err);
+        }
+      });
+    } else {
+      console.log("Registration form is invalid");
+    }
+  }
+}
