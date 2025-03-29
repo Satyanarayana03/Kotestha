@@ -6,157 +6,112 @@ import { AuthenticationService } from '../authentication.service';
 
 @Component({
   selector: 'app-registration',
+  standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.css'
 })
 export class RegistrationComponent implements OnInit {
-  customerForm!: FormGroup;
-  agentForm!: FormGroup;
-  customers: any[] = [];
-  agents: any[] = [];
+  registrationForm!: FormGroup;
+  selectedRole: string = 'customer';
 
-  constructor(private formBuilder: FormBuilder, private authenticate: AuthenticationService, private router: Router) { }
+  constructor(private formBuilder: FormBuilder, private authenticate: AuthenticationService, private router: Router) {}
 
   ngOnInit(): void {
-    this.customerForm = this.formBuilder.group({
-      customerId: ['', Validators.required],
-      customerName: ['', Validators.required],
-      customerEmail: ['', [Validators.required, Validators.email]],
-      customerPhoneNo: ['', Validators.required],
-      password: ['', Validators.required],
-      customerAddress: ['', Validators.required]
-    });
+    this.initializeForm();
+  }
 
-    this.agentForm = this.formBuilder.group({
-      agentId: ['', Validators.required],
-      agentName: ['', Validators.required],
-      agentEmail: ['', [Validators.required, Validators.email]],
-      agentPhoneNo: ['', Validators.required],
+  initializeForm(): void {
+    this.registrationForm = this.formBuilder.group({
+      role: ['customer', Validators.required], // Default to 'customer'
+      id: ['', Validators.required],
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      phoneNo: ['', Validators.required],
       password: ['', Validators.required],
-      agentAddress: ['', Validators.required]
+      address: ['', Validators.required]
     });
   }
 
-  onCustomerSubmit(): void {
-    if (this.customerForm.valid) {
-      this.authenticate.registerCustomer(this.customerForm.value).subscribe({
+  onRoleChange(): void {
+    this.registrationForm.reset();
+    this.registrationForm.patchValue({ role: this.selectedRole }); // Maintain role selection
+  }
+
+  onSubmit(): void {
+    if (this.registrationForm.valid) {
+      const registerMethod = this.selectedRole === 'customer' ? 'registerCustomer' : 'registerAgent';
+
+      this.authenticate[registerMethod](this.registrationForm.value).subscribe({
         next: (data: any) => {
           localStorage.setItem('userData', JSON.stringify(data));
-          console.log('Customer registered successfully:', data);
+          console.log(`${this.selectedRole} registered successfully:`, data);
           this.router.navigate(['home']);
         },
         error: (err) => {
-          console.error('Error registering the customer:', err);
+          console.error(`Error registering the ${this.selectedRole}:`, err);
         }
       });
     } else {
-      console.log("Customer form is invalid");
-    }
-  }
-
-  onAgentSubmit(): void {
-    if (this.agentForm.valid) {
-      this.authenticate.registerAgent(this.agentForm.value).subscribe({
-        next: (data: any) => {
-          localStorage.setItem('agentData', JSON.stringify(data));
-          console.log('Agent registered successfully:', data);
-          this.router.navigate(['home']);
-        },
-        error: (err) => {
-          console.error('Error registering the agent:', err);
-        }
-      });
-    } else {
-      console.log("Agent form is invalid");
+      console.log("Registration form is invalid");
     }
   }
 }
 
 <div class="container mt-1">
-  <h2 class="text-center mb-4">Registration Page</h2>
+  <h2 class="text-center mb-4">User Registration</h2>
 
-  <!-- Nav Tabs for Customer & Agent Registration -->
-  <ul class="nav nav-tabs mb-3">
-    <li class="nav-item">
-      <a class="nav-link active" data-bs-toggle="tab" href="#customer">Customer Registration</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" data-bs-toggle="tab" href="#agent">Agent Registration</a>
-    </li>
-  </ul>
-
-  <div class="tab-content">
-    <!-- Customer Registration Form -->
-    <div id="customer" class="tab-pane fade show active">
-      <form [formGroup]="customerForm" (ngSubmit)="onCustomerSubmit()" class="needs-validation container bg-light border rounded border-secondary p-4">
-        <div class="mb-3">
-          <label for="customerId" class="form-label">Customer ID</label>
-          <input type="text" id="customerId" class="form-control" placeholder="Enter your Customer ID" formControlName="customerId">
-          <div *ngIf="customerForm.get('customerId')?.touched && customerForm.get('customerId')?.invalid" class="text-danger">
-            <small *ngIf="customerForm.get('customerId')?.errors?.['required']">Customer ID is required.</small>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label for="customerName" class="form-label">Customer Name</label>
-          <input type="text" id="customerName" class="form-control" placeholder="Enter your name" formControlName="customerName">
-        </div>
-
-        <div class="mb-3">
-          <label for="customerEmail" class="form-label">Customer Email</label>
-          <input type="email" id="customerEmail" class="form-control" placeholder="Enter your email" formControlName="customerEmail">
-        </div>
-
-        <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
-          <input type="password" id="password" class="form-control" placeholder="Enter your password" formControlName="password">
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100" [disabled]="customerForm.invalid">Register as Customer</button>
-      </form>
-    </div>
-
-    <!-- Agent Registration Form -->
-    <div id="agent" class="tab-pane fade">
-      <form [formGroup]="agentForm" (ngSubmit)="onAgentSubmit()" class="needs-validation container bg-light border rounded border-secondary p-4">
-        <div class="mb-3">
-          <label for="agentId" class="form-label">Agent ID</label>
-          <input type="text" id="agentId" class="form-control" placeholder="Enter your Agent ID" formControlName="agentId">
-        </div>
-
-        <div class="mb-3">
-          <label for="agentName" class="form-label">Agent Name</label>
-          <input type="text" id="agentName" class="form-control" placeholder="Enter your name" formControlName="agentName">
-        </div>
-
-        <div class="mb-3">
-          <label for="agentEmail" class="form-label">Agent Email</label>
-          <input type="email" id="agentEmail" class="form-control" placeholder="Enter your email" formControlName="agentEmail">
-        </div>
-
-        <div class="mb-3">
-          <label for="agentPhoneNo" class="form-label">Agent Phone Number</label>
-          <input type="text" id="agentPhoneNo" class="form-control" placeholder="Enter your phone number" formControlName="agentPhoneNo">
-        </div>
-
-        <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
-          <input type="password" id="password" class="form-control" placeholder="Enter your password" formControlName="password">
-        </div>
-
-        <button type="submit" class="btn btn-success w-100" [disabled]="agentForm.invalid">Register as Agent</button>
-      </form>
-    </div>
+  <!-- Role Selection -->
+  <div class="mb-3 text-center">
+    <label for="roleSelection" class="form-label fw-bold">Register as:</label>
+    <select id="roleSelection" class="form-select w-50 mx-auto" [(ngModel)]="selectedRole" (change)="onRoleChange()">
+      <option value="customer">Customer</option>
+      <option value="agent">Agent</option>
+    </select>
   </div>
+
+  <!-- Registration Form -->
+  <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="needs-validation container bg-light border rounded border-secondary p-4">
+    <h3 class="text-center">{{ selectedRole | titlecase }} Registration</h3>
+
+    <div class="mb-3">
+      <label for="id" class="form-label">{{ selectedRole | titlecase }} ID</label>
+      <input type="text" id="id" class="form-control" placeholder="Enter your ID" formControlName="id">
+    </div>
+
+    <div class="mb-3">
+      <label for="name" class="form-label">{{ selectedRole | titlecase }} Name</label>
+      <input type="text" id="name" class="form-control" placeholder="Enter your name" formControlName="name">
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">{{ selectedRole | titlecase }} Email</label>
+      <input type="email" id="email" class="form-control" placeholder="Enter your email" formControlName="email">
+    </div>
+
+    <div class="mb-3">
+      <label for="phoneNo" class="form-label">{{ selectedRole | titlecase }} Phone Number</label>
+      <input type="text" id="phoneNo" class="form-control" placeholder="Enter your phone number" formControlName="phoneNo">
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" id="password" class="form-control" placeholder="Enter your password" formControlName="password">
+    </div>
+
+    <div class="mb-3">
+      <label for="address" class="form-label">{{ selectedRole | titlecase }} Address</label>
+      <input type="text" id="address" class="form-control" placeholder="Enter your address" formControlName="address">
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100" [disabled]="registrationForm.invalid">
+      Register as {{ selectedRole | titlecase }}
+    </button>
+  </form>
 
   <div class="text-center mt-2">
     <p>Already have an account?</p>
     <a routerLink="/login" class="btn btn-link">Login</a>
   </div>
 </div>
-
-registerAgent(agent: any): Observable<any> {
-  return this.http.post<any>(`http://localhost:7575/agent/addAgent`, agent);
-}
 
