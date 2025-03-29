@@ -1,377 +1,162 @@
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Login Page</h2>
-
-    <label for="customerId" class="form-label">Select Role</label>
-    <select [(ngModel)]="role" name="status" id="role" class="form-control mb-3" required >
-        <option *ngFor="let role of roles" [value]="role">{{role}}</option>
-      </select> 
-  
-    <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="needs-validation border border-secondary rounded bg-light p-4 ">
-  
-        
-      <!-- Customer ID Field -->
-      <div class="mb-3">
-        <label for="customerId" class="form-label">{{role}} ID</label>
-        <input 
-          type="text" 
-          id="customerId" 
-          class="form-control" 
-          placeholder="Enter your Customer ID" 
-          formControlName="customerId">
-        <div *ngIf="customerForm.get('customerId')?.touched && customerForm.get('customerId')?.invalid" class="text-danger">
-          <small *ngIf="customerForm.get('customerId')?.errors?.['required']">Customer ID is required.</small>
-        </div>
-      </div>
-  
-      <!-- Email Field -->
-      <div class="mb-3">
-        <label for="customerEmail" class="form-label">{{role}} Email</label>
-        <input 
-          type="text" 
-          id="customerEmail" 
-          class="form-control" 
-          placeholder="Enter your Email" 
-          formControlName="customerEmail">
-        <div *ngIf="customerForm.get('customerEmail')?.touched && customerForm.get('customerEmail')?.invalid" class="text-danger">
-          <small *ngIf="customerForm.get('customerEmail')?.errors?.['required']">Email is required.</small>
-        </div>
-      </div>
-  
-      <!-- Password Field -->
-      <div class="mb-3">
-        <label for="password" class="form-label">{{role}} Password</label>
-        <input 
-          type="password" 
-          id="password" 
-          class="form-control" 
-          placeholder="Enter your Password" 
-          formControlName="password">
-        <div *ngIf="customerForm.get('password')?.touched && customerForm.get('password')?.invalid" class="text-danger">
-          <small *ngIf="customerForm.get('password')?.errors?.['required']">Password is required.</small>
-        </div>
-      </div>
-  
-      <!-- Submit Button -->
-      <button type="submit" class="btn btn-primary w-100" [disabled]="customerForm.invalid">Login</button>
-  
-    </form>
-  
-    <!-- Registration Link -->
-    <div class="text-center mt-2 container d-flex justify-content-center align-items-center">
-        <p>don't have a account?</p>
-        <a routerLink="/register" class="btn btn-link mb-3">Register</a>
-    </div>
-  </div>
-  
-import { CommonModule } from '@angular/common';
-import { Component, Injectable, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { AuthenticationService } from '../authentication.service';
- 
- 
-@Component({
-  selector: 'app-login',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule,RouterLink],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
-})
-@Injectable({
-  providedIn: 'root' // Makes the service available throughout the app
-})
-export class LoginComponent implements OnInit{
- 
-  customerForm!: FormGroup;
-  roles:any[]= ["Customer","Agent"];
-  role :String= "";
-  agent:any={
-        agentId:0,
-        password:0
-  }
- 
-  constructor(private formBuilder: FormBuilder,private AuthenticationService: AuthenticationService, private router :Router)
-  {
- 
-  }
-  ngOnInit(): void {
-    this.customerForm = this.formBuilder.group(
-      {
-        customerId: ['',Validators.required],
-        password:['',Validators.required],
-        customerEmail:['',Validators.required],
-      }
-     
-    )
-  }
- 
-  onSubmit(): void {
-    if (this.customerForm.invalid) {
-        return;
-    }
-    console.log(this.customerForm.value);
-    if(this.role=="Customer")
-    {
-    this.AuthenticationService.loginCustomer(this.customerForm.value).subscribe({
-        next: (data: any) => {
-           
-            localStorage.setItem('userData', JSON.stringify(data));
-            console.log('User logged in successfully:', data);
-            this.router.navigate(['home']);
-            const user = JSON.parse(localStorage.getItem('userData')||"null");
-            console.log(user.customerId);
- 
-        },
-        error: (err) => {
-            console.error('Error logging the user:', err);
-        }
-    });
-  }
-  else
-  {
-    this.agent={
-      agentId : this.customerForm.value.customerId,
-      password : this.customerForm.value.password
-   
-    }
-    console.log(this.agent);
-   
-    this.AuthenticationService.loginAgent(this.agent).subscribe({
-      next: (data: any) => {
-         
-          localStorage.setItem('agentData', JSON.stringify(data));
-          console.log('User logged in successfully:', data);
-          this.router.navigate(['home']);
-          // const user = JSON.parse(localStorage.getItem('userData')||"null");
-          // console.log(user.customerId);
- 
-      },
-      error: (err: any) => {
-          console.error('Error logging the user:', err);
-      }
-  });
-  }
-}
- 
- 
- 
- 
-}
- 
- 
- 
-Registration:
-<div class="container mt-1">
-  <h2 class="text-center mb-4">Customer Registration Page</h2>
-
-  <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="needs-validation container bg-light border rounded border-secondar p-4">
-
-    <!-- Customer ID -->
-    <div class="mb-3">
-      <label for="customerId" class="form-label">Customer ID</label>
-      <input
-        type="text"
-        id="customerId"
-        class="form-control"
-        placeholder="Enter your Customer ID"
-        formControlName="customerId"
-      >
-      <div *ngIf="customerForm.get('customerId')?.touched && customerForm.get('customerId')?.invalid" class="text-danger">
-        <small *ngIf="customerForm.get('customerId')?.errors?.['required']">Customer ID is required.</small>
-      </div>
-    </div>
-
-    <!-- Customer Name -->
-    <div class="mb-3">
-      <label for="customerName" class="form-label">Customer Name</label>
-      <input
-        type="text"
-        id="customerName"
-        class="form-control"
-        placeholder="Enter your name"
-        formControlName="customerName"
-      >
-      <div *ngIf="customerForm.get('customerName')?.touched && customerForm.get('customerName')?.invalid" class="text-danger">
-        <small *ngIf="customerForm.get('customerName')?.errors?.['required']">Customer Name is required.</small>
-      </div>
-    </div>
-
-    <!-- Customer Email -->
-    <div class="mb-3">
-      <label for="customerEmail" class="form-label">Customer Email</label>
-      <input
-        type="email"
-        id="customerEmail"
-        class="form-control"
-        placeholder="Enter your email"
-        formControlName="customerEmail"
-      >
-      <div *ngIf="customerForm.get('customerEmail')?.touched && customerForm.get('customerEmail')?.invalid" class="text-danger">
-        <small *ngIf="customerForm.get('customerEmail')?.errors?.['required']">Customer Email is required.</small>
-      </div>
-    </div>
-
-    <!-- Customer Phone Number -->
-    <div class="mb-3">
-      <label for="customerPhoneNo" class="form-label">Customer Phone Number</label>
-      <input
-        type="text"
-        id="customerPhoneNo"
-        class="form-control"
-        placeholder="Enter your phone number"
-        formControlName="customerPhoneNo"
-      >
-      <div *ngIf="customerForm.get('customerPhoneNo')?.touched && customerForm.get('customerPhoneNo')?.invalid" class="text-danger">
-        <small *ngIf="customerForm.get('customerPhoneNo')?.errors?.['required']">Customer Phone Number is required.</small>
-      </div>
-    </div>
-
-    <!-- Customer Address -->
-    <div class="mb-3">
-      <label for="customerAddress" class="form-label">Customer Address</label>
-      <input
-        type="text"
-        id="customerAddress"
-        class="form-control"
-        placeholder="Enter your address"
-        formControlName="customerAddress"
-      >
-      <div *ngIf="customerForm.get('customerAddress')?.touched && customerForm.get('customerAddress')?.invalid" class="text-danger">
-        <small *ngIf="customerForm.get('customerAddress')?.errors?.['required']">Customer Address is required.</small>
-      </div>
-    </div>
-
-    <!-- Password -->
-    <div class="mb-3">
-      <label for="password" class="form-label">Password</label>
-      <input
-        type="password"
-        id="password"
-        class="form-control"
-        placeholder="Enter your password"
-        formControlName="password"
-      >
-      <div *ngIf="customerForm.get('password')?.touched && customerForm.get('password')?.invalid" class="text-danger">
-        <small *ngIf="customerForm.get('password')?.errors?.['required']">Password is required.</small>
-      </div>
-    </div>
-
-    <!-- Submit Button -->
-    <button type="submit" class="btn btn-primary w-100" [disabled]="customerForm.invalid">Register</button>
-
-  </form>
-
-  <div class="text-center mt-2 container d-flex justify-content-center align-items-center">
-    <p>Already have an account?</p>
-    <a routerLink="/login" class="btn btn-link mb-3">Login</a>
-  </div>
-</div>
-
-
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-
 import { Router, RouterLink } from '@angular/router';
 import { AuthenticationService } from '../authentication.service';
 
-
 @Component({
   selector: 'app-registration',
-  imports: [CommonModule,FormsModule,ReactiveFormsModule,RouterLink],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.css'
 })
-export class RegistrationComponent  implements OnInit {
-
+export class RegistrationComponent implements OnInit {
   customerForm!: FormGroup;
-  customers: any[]=[];
-  constructor(private formBuilder: FormBuilder,private autheticate: AuthenticationService,private router :Router)
-  {
+  agentForm!: FormGroup;
+  customers: any[] = [];
+  agents: any[] = [];
 
-  }
+  constructor(private formBuilder: FormBuilder, private authenticate: AuthenticationService, private router: Router) { }
+
   ngOnInit(): void {
-    this.customerForm = this.formBuilder.group(
-      {
-       
-          customerId: ['', Validators.required],
-          customerName: ['', Validators.required],
-          customerEmail: ['', Validators.required],
-          customerPhoneNo: ['', Validators.required],
-          password: ['', Validators.required],
-          customerAddress: ['', Validators.required]
-      }
-      
-    )
+    this.customerForm = this.formBuilder.group({
+      customerId: ['', Validators.required],
+      customerName: ['', Validators.required],
+      customerEmail: ['', [Validators.required, Validators.email]],
+      customerPhoneNo: ['', Validators.required],
+      password: ['', Validators.required],
+      customerAddress: ['', Validators.required]
+    });
+
+    this.agentForm = this.formBuilder.group({
+      agentId: ['', Validators.required],
+      agentName: ['', Validators.required],
+      agentEmail: ['', [Validators.required, Validators.email]],
+      agentPhoneNo: ['', Validators.required],
+      password: ['', Validators.required],
+      agentAddress: ['', Validators.required]
+    });
   }
 
-  onSubmit(): void{
-
-    if(this.customerForm.valid)
-    {
-      this.autheticate.registerCustomer(this.customerForm.value).subscribe({
+  onCustomerSubmit(): void {
+    if (this.customerForm.valid) {
+      this.authenticate.registerCustomer(this.customerForm.value).subscribe({
         next: (data: any) => {
-            
           localStorage.setItem('userData', JSON.stringify(data));
-          console.log('User logged in successfully:', data);
+          console.log('Customer registered successfully:', data);
           this.router.navigate(['home']);
-          const user = JSON.parse(localStorage.getItem('userData')||"null");
-          console.log(user.customerId);
-
-      },
-      error: (err) => {
-          console.error('Error logging the user:', err);
-      }
-      })
-   
+        },
+        error: (err) => {
+          console.error('Error registering the customer:', err);
+        }
+      });
+    } else {
+      console.log("Customer form is invalid");
     }
-    else{
-      console.log("customerForm is inavlid");
-    }
-    
+  }
 
+  onAgentSubmit(): void {
+    if (this.agentForm.valid) {
+      this.authenticate.registerAgent(this.agentForm.value).subscribe({
+        next: (data: any) => {
+          localStorage.setItem('agentData', JSON.stringify(data));
+          console.log('Agent registered successfully:', data);
+          this.router.navigate(['home']);
+        },
+        error: (err) => {
+          console.error('Error registering the agent:', err);
+        }
+      });
+    } else {
+      console.log("Agent form is invalid");
+    }
   }
 }
 
+<div class="container mt-1">
+  <h2 class="text-center mb-4">Registration Page</h2>
 
-import { HttpClient} from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+  <!-- Nav Tabs for Customer & Agent Registration -->
+  <ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <a class="nav-link active" data-bs-toggle="tab" href="#customer">Customer Registration</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-bs-toggle="tab" href="#agent">Agent Registration</a>
+    </li>
+  </ul>
 
+  <div class="tab-content">
+    <!-- Customer Registration Form -->
+    <div id="customer" class="tab-pane fade show active">
+      <form [formGroup]="customerForm" (ngSubmit)="onCustomerSubmit()" class="needs-validation container bg-light border rounded border-secondary p-4">
+        <div class="mb-3">
+          <label for="customerId" class="form-label">Customer ID</label>
+          <input type="text" id="customerId" class="form-control" placeholder="Enter your Customer ID" formControlName="customerId">
+          <div *ngIf="customerForm.get('customerId')?.touched && customerForm.get('customerId')?.invalid" class="text-danger">
+            <small *ngIf="customerForm.get('customerId')?.errors?.['required']">Customer ID is required.</small>
+          </div>
+        </div>
 
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthenticationService {
+        <div class="mb-3">
+          <label for="customerName" class="form-label">Customer Name</label>
+          <input type="text" id="customerName" class="form-control" placeholder="Enter your name" formControlName="customerName">
+        </div>
 
-  
+        <div class="mb-3">
+          <label for="customerEmail" class="form-label">Customer Email</label>
+          <input type="email" id="customerEmail" class="form-control" placeholder="Enter your email" formControlName="customerEmail">
+        </div>
 
-  constructor(private http: HttpClient) { }
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="Enter your password" formControlName="password">
+        </div>
 
-  loginCustomer(customer:any): Observable<any>
-  {
-    return this.http.post<any>(`http://localhost:7272/customer/login`,customer);
-   
-  }
-  registerCustomer(customer:any): Observable<any>
-  {
-    return this.http.post<any>(`http://localhost:7272/customer/addCustomer`,customer);
-   
-  }
-  loginAgent(agent:any): Observable<any>
-  {
-    return this.http.post<any>(`http://localhost:7575/agent/login`,agent);
-   
-  }
-  updateCustomer(customer:any): Observable<any>
-  {
-    return this.http.put<any>(`http://localhost:7272/customer/updateCustomer`,customer);
-   
-  }
-  updateAgent(customer:any): Observable<any>
-  {
-    return this.http.put<any>(`http://localhost:7575/agent/updateAgent`,customer);
-   
-  }
+        <button type="submit" class="btn btn-primary w-100" [disabled]="customerForm.invalid">Register as Customer</button>
+      </form>
+    </div>
+
+    <!-- Agent Registration Form -->
+    <div id="agent" class="tab-pane fade">
+      <form [formGroup]="agentForm" (ngSubmit)="onAgentSubmit()" class="needs-validation container bg-light border rounded border-secondary p-4">
+        <div class="mb-3">
+          <label for="agentId" class="form-label">Agent ID</label>
+          <input type="text" id="agentId" class="form-control" placeholder="Enter your Agent ID" formControlName="agentId">
+        </div>
+
+        <div class="mb-3">
+          <label for="agentName" class="form-label">Agent Name</label>
+          <input type="text" id="agentName" class="form-control" placeholder="Enter your name" formControlName="agentName">
+        </div>
+
+        <div class="mb-3">
+          <label for="agentEmail" class="form-label">Agent Email</label>
+          <input type="email" id="agentEmail" class="form-control" placeholder="Enter your email" formControlName="agentEmail">
+        </div>
+
+        <div class="mb-3">
+          <label for="agentPhoneNo" class="form-label">Agent Phone Number</label>
+          <input type="text" id="agentPhoneNo" class="form-control" placeholder="Enter your phone number" formControlName="agentPhoneNo">
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="Enter your password" formControlName="password">
+        </div>
+
+        <button type="submit" class="btn btn-success w-100" [disabled]="agentForm.invalid">Register as Agent</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="text-center mt-2">
+    <p>Already have an account?</p>
+    <a routerLink="/login" class="btn btn-link">Login</a>
+  </div>
+</div>
+
+registerAgent(agent: any): Observable<any> {
+  return this.http.post<any>(`http://localhost:7575/agent/addAgent`, agent);
 }
-
 
