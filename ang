@@ -22,20 +22,30 @@ export class RegistrationComponent implements OnInit {
   }
 
   initializeForm(): void {
-    this.registrationForm = this.formBuilder.group({
-      role: ['customer', Validators.required], // Default to 'customer'
-      id: ['', Validators.required],
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phoneNo: ['', Validators.required],
-      password: ['', Validators.required],
-      address: ['', Validators.required]
-    });
+    if (this.selectedRole === 'customer') {
+      this.registrationForm = this.formBuilder.group({
+        role: ['customer', Validators.required],
+        id: ['', Validators.required],
+        name: ['', Validators.required],
+        email: ['', [Validators.required, Validators.email]],
+        phoneNo: ['', Validators.required],
+        password: ['', Validators.required],
+        address: ['', Validators.required]
+      });
+    } else {
+      this.registrationForm = this.formBuilder.group({
+        role: ['agent', Validators.required],
+        id: ['', Validators.required],
+        name: ['', Validators.required],
+        contactInfo: ['', Validators.required],
+        password: ['', Validators.required],
+        assignedPolicies: ['', Validators.required]
+      });
+    }
   }
 
   onRoleChange(): void {
-    this.registrationForm.reset();
-    this.registrationForm.patchValue({ role: this.selectedRole }); // Maintain role selection
+    this.initializeForm(); // Reinitialize form based on role selection
   }
 
   onSubmit(): void {
@@ -84,24 +94,40 @@ export class RegistrationComponent implements OnInit {
       <input type="text" id="name" class="form-control" placeholder="Enter your name" formControlName="name">
     </div>
 
-    <div class="mb-3">
-      <label for="email" class="form-label">{{ selectedRole | titlecase }} Email</label>
-      <input type="email" id="email" class="form-control" placeholder="Enter your email" formControlName="email">
-    </div>
+    <!-- Fields for CUSTOMER -->
+    <ng-container *ngIf="selectedRole === 'customer'">
+      <div class="mb-3">
+        <label for="email" class="form-label">Customer Email</label>
+        <input type="email" id="email" class="form-control" placeholder="Enter your email" formControlName="email">
+      </div>
 
-    <div class="mb-3">
-      <label for="phoneNo" class="form-label">{{ selectedRole | titlecase }} Phone Number</label>
-      <input type="text" id="phoneNo" class="form-control" placeholder="Enter your phone number" formControlName="phoneNo">
-    </div>
+      <div class="mb-3">
+        <label for="phoneNo" class="form-label">Customer Phone Number</label>
+        <input type="text" id="phoneNo" class="form-control" placeholder="Enter your phone number" formControlName="phoneNo">
+      </div>
+
+      <div class="mb-3">
+        <label for="address" class="form-label">Customer Address</label>
+        <input type="text" id="address" class="form-control" placeholder="Enter your address" formControlName="address">
+      </div>
+    </ng-container>
+
+    <!-- Fields for AGENT -->
+    <ng-container *ngIf="selectedRole === 'agent'">
+      <div class="mb-3">
+        <label for="contactInfo" class="form-label">Agent Contact Info</label>
+        <input type="text" id="contactInfo" class="form-control" placeholder="Enter your contact info" formControlName="contactInfo">
+      </div>
+
+      <div class="mb-3">
+        <label for="assignedPolicies" class="form-label">Assigned Policies</label>
+        <input type="text" id="assignedPolicies" class="form-control" placeholder="Enter assigned policies" formControlName="assignedPolicies">
+      </div>
+    </ng-container>
 
     <div class="mb-3">
       <label for="password" class="form-label">Password</label>
       <input type="password" id="password" class="form-control" placeholder="Enter your password" formControlName="password">
-    </div>
-
-    <div class="mb-3">
-      <label for="address" class="form-label">{{ selectedRole | titlecase }} Address</label>
-      <input type="text" id="address" class="form-control" placeholder="Enter your address" formControlName="address">
     </div>
 
     <button type="submit" class="btn btn-primary w-100" [disabled]="registrationForm.invalid">
@@ -114,4 +140,3 @@ export class RegistrationComponent implements OnInit {
     <a routerLink="/login" class="btn btn-link">Login</a>
   </div>
 </div>
-
