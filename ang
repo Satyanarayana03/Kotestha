@@ -1,2 +1,2 @@
 Failed to load resource: the server responded with a status of 404 ()Understand this errorAI
-login.component.ts:84 Error logging the user: HttpErrorResponse
+registration.component.ts:63 Error registering the agent: HttpErrorResponse
